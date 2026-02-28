@@ -15,11 +15,10 @@ router.post("/", async (req, res) => {
 You are a SQL mentor helping a student.
 
 STRICT RULES:
-- Do NOT give the final SQL query.
+- Do NOT provide the final SQL query.
 - Do NOT write a complete solution.
 - Only give conceptual hints.
-- Keep response under 5 sentences.
-- Guide the student toward thinking about filtering, conditions, joins, etc.
+- Keep response short (max 4 sentences).
 
 Assignment Question:
 ${question}
@@ -31,28 +30,37 @@ ${userQuery || "No query written yet."}
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "mistralai/mistral-7b-instruct",
+        model: "meta-llama/llama-3-8b-instruct",
         messages: [
           { role: "system", content: "You are a helpful SQL mentor." },
           { role: "user", content: prompt }
         ],
-        temperature: 0.4,
-        max_tokens: 150
+        temperature: 0.3,
+        max_tokens: 120
       },
       {
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "HTTP-Referer": "http://localhost:5000",
+          "X-Title": "CipherSQLStudio",
           "Content-Type": "application/json"
         }
       }
     );
+
+    console.log("OpenRouter Full Response:", response.data);
+
+    if (!response.data.choices || !response.data.choices[0]) {
+      return res.status(500).json({ error: "Invalid response from model." });
+    }
 
     const hint = response.data.choices[0].message.content;
 
     res.json({ hint });
 
   } catch (error) {
-    console.error("OpenRouter Error:", error.response?.data || error.message);
+    console.error("OpenRouter ERROR DETAILS:");
+    console.error(error.response?.data || error.message);
     res.status(500).json({ error: "Failed to generate hint." });
   }
 });
