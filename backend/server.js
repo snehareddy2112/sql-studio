@@ -9,6 +9,7 @@ require("./config/pg");
 
 const assignmentRoutes = require("./routes/assignmentRoutes");
 const queryRoutes = require("./routes/queryRoutes");
+const hintRoutes = require("./routes/hintRoutes");
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/assignments", assignmentRoutes);
 app.use("/api/query", queryRoutes);
+app.use("/api/hint", hintRoutes);
 
 const PORT = process.env.PORT || 5000;
 
