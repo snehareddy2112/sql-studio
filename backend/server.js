@@ -8,6 +8,7 @@ const connectMongo = require("./config/db");
 require("./config/pg");
 
 const assignmentRoutes = require("./routes/assignmentRoutes");
+const queryRoutes = require("./routes/queryRoutes");
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/assignments", assignmentRoutes);
+app.use("/api/query", queryRoutes);
 
 const PORT = process.env.PORT || 5000;
 
